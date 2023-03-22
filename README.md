@@ -59,6 +59,9 @@ unless the social provider account has the same name and email as an existing us
 used social login account, the same user will be used, but social login from a different social login account will create
 a new user and those accounts will not be linked in any way.
 
+When using the `HasSocialUsers` trait, the `socialUsers()` method will return a `HasMany` relationship, so you can access
+the social users for a user.
+
 ## Other Considerations
 
 Socialite and Passport should be installed, your social providers setup and your user model setup to use passport.
