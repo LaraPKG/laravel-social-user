@@ -14,14 +14,14 @@ class LaravelSocialProviderServiceProvider extends ServiceProvider
             [
                 __DIR__ . '/../config/laravel-social-user.php' => config_path('laravel-social-user.php'),
             ],
-            'laravel-social-user-config'
+            'config'
         );
 
         $this->publishes(
             [
                 __DIR__ . '/../database/migrations/' => database_path('migrations')
             ],
-            'laravel-social-user-migrations'
+            'migrations'
         );
 
         $this->loadRoutesFrom(__DIR__ . '/../routes/laravel-social-user.php');

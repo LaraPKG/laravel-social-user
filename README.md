@@ -16,13 +16,13 @@ composer require larapkg/laravel-social-user
 To publish the configuration file which enables the setting of your applications user model, run:
 
 ```bash
-php artisan vendor:publish --provider="Larapkg\LaravelSocialUser\Providers\LaravelSocialProviderServiceProvider" --tag="laravel-social-user-config"
+php artisan vendor:publish --provider="Larapkg\LaravelSocialUser\Providers\LaravelSocialProviderServiceProvider" --tag="config"
 ```
 
 If you want to alter the migrations, you can publish them with:
 
 ```bash
-php artisan vendor:publish --provider="Larapkg\LaravelSocialUser\Providers\LaravelSocialProviderServiceProvider" --tag="laravel-social-user-migrations"
+php artisan vendor:publish --provider="Larapkg\LaravelSocialUser\Providers\LaravelSocialProviderServiceProvider" --tag="migrations"
 ```
 
 ## Usage
@@ -32,6 +32,8 @@ Run the migration to create the `user_social_providers` table.
 Then attach the `HasSocialUsers` trait to your user model.
 
 Publish the config and set up your required details, ensuring you set the user model.
+
+Remove any fields you no longer need from the user table migration or create and run a migration to remove them, or make fields nullable.
 
 Add a social login button to your frontend application and use the social provider's SDK to get the user's access token. 
 Then send a POST request to your API with the access token and the provider name.
