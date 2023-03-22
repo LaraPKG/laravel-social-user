@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $expires_in
  * @property string $token_secret
  * @property string $avatar
- * @property bool $active
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -36,12 +35,10 @@ class UserSocialProvider extends Model
         'expires_in',
         'token_secret',
         'avatar',
-        'active',
     ];
 
     protected $casts = [
         'expires_in' => 'integer',
-        'active' => 'boolean',
     ];
 
     public function user(): BelongsTo

@@ -5,71 +5,66 @@ declare(strict_types=1);
 namespace Larapkg\LaravelSocialUser\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Auth;
+use Larapkg\LaravelSocialUser\Http\Requests\SocialLoginRequest;
 use Larapkg\LaravelSocialUser\Models\UserSocialProvider;
-use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Contracts\User as SocialUser;
+use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\One\User as OauthOneUser;
 use Laravel\Socialite\Two\User as OauthTwoUser;
+use Spatie\RouteAttributes\Attributes\Post;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Throwable;
+
+use function config;
+use function response;
 
 class SocialProviderController extends Controller
 {
     private string $userModel;
+
+    private const INVALID_PROVIDER = 'Invalid provider';
 
     public function __construct()
     {
         $this->userModel = config('laravel-social-user.user_model');
     }
 
-    public function redirect(string $provider): RedirectResponse
+    public function socialLogin(SocialLoginRequest $request, string $provider): JsonResponse
     {
         try {
-            $redirect = Socialite::driver($provider)->redirect()->getTargetUrl();
+            $socialite = Socialite::driver($provider);
         } catch (Throwable) {
-            throw new BadRequestException('Invalid provider');
+            throw new BadRequestException(self::INVALID_PROVIDER);
         }
-        
-        return redirect($redirect);
-    }
 
-    public function callback(string $provider): RedirectResponse
-    {
-        $socialProviderUser = Socialite::driver($provider)->user();
+        $socialProviderUser = $socialite?->userFromToken($request->get('access_token'));
+
+        if (!$socialProviderUser) {
+            throw new BadRequestException(self::INVALID_PROVIDER);
+        }
 
         $user = $this->userModel::updateOrCreate([
-                'name' => $socialProviderUser->getName(),
-                'active_provider' => $provider,
-                'active' => true,
+            'name' => $socialProviderUser->getName(),
+            'email' => $socialProviderUser->getEmail(),
         ]);
-        
-        $userSocialProvider = $this->createUserProviderRecord($user, $socialProviderUser, $provider);
-        
-        $user->givePermissionTo($this->userModel::defaultPermissions());
-        
-        if (!$user->active || !$userSocialProvider->active) {
-            throw new AccessDeniedException('Unauthorized');
+
+        $socialProviderUser = $this->createUserProviderRecord($user, $socialProviderUser, $provider);
+
+        if (!$socialProviderUser) {
+            throw new AccessDeniedException(self::INVALID_PROVIDER);
         }
 
-        Auth::login($user);
-        
-        return redirect()->intended();
-    }
+        $token = $user->createToken(config('app.name'))->accessToken;
 
-    public function activate(UserSocialProvider $provider): RedirectResponse
-    {
-        $provider->active = !$provider->active;
-        $provider->save();
-
-        return redirect()->back();
+        return response()->json([
+            '_token' => $token
+        ]);
     }
     
-    private function createUserProviderRecord(
+    protected function createUserProviderRecord(
         Model $user,
         SocialUser $socialProviderUser,
         string $provider,
@@ -85,7 +80,7 @@ class SocialProviderController extends Controller
         return $this->createOauthTwoProviderRecord($user, $socialProviderUser, $provider);
     }
     
-    private function createOauthOneProviderRecord(
+    protected function createOauthOneProviderRecord(
         Model $user,
         OauthOneUser $socialProviderUser,
         string $provider,
@@ -99,15 +94,12 @@ class SocialProviderController extends Controller
             'provider' => $provider,
             'email' => $socialProviderUser->getEmail(),
             'avatar' => $socialProviderUser->getAvatar(),
-            'token' => $socialProviderUser->token,
-            'token_secret' => $socialProviderUser->tokenSecret,
-            'active' => true,
         ];
 
         return $this->createRecord($attributes, $values);
     }
     
-    private function createOauthTwoProviderRecord(
+    protected function createOauthTwoProviderRecord(
         Model $user,
         OauthTwoUser $socialProviderUser,
         string $provider,
@@ -121,10 +113,6 @@ class SocialProviderController extends Controller
             'provider' => $provider,
             'email' => $socialProviderUser->getEmail(),
             'avatar' => $socialProviderUser->getAvatar(),
-            'token' => $socialProviderUser->token,
-            'refresh_token' => $socialProviderUser->refreshToken,
-            'expires_in' => $socialProviderUser->expiresIn,
-            'active' => true,
         ];
         
         return $this->createRecord($attributes, $values);
@@ -134,7 +122,7 @@ class SocialProviderController extends Controller
      * @param array<string, mixed> $attributes
      * @param array<string, mixed> $values
      */
-    private function createRecord(array $attributes, array $values): UserSocialProvider
+    protected function createRecord(array $attributes, array $values): UserSocialProvider
     {
         /** @var UserSocialProvider $userSocialProvider */
         $userSocialProvider = UserSocialProvider::query()->updateOrCreate($attributes, $values);

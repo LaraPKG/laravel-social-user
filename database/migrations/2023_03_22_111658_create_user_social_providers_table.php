@@ -17,7 +17,6 @@ return new class {
             $table->integer('expires_in')->nullable();
             $table->string('token_secret')->nullable();
             $table->string('avatar')->nullable();
-            $table->boolean('active')->default(true);
             $table->timestamps();
 
             $table->foreign('user_id')
