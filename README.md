@@ -71,3 +71,5 @@ Those things are out of scope for this readme, but you can find more information
  - [Laravel Socialite](https://laravel.com/docs/10.x/socialite)
  - [Laravel Socialite Providers](https://socialiteproviders.netlify.app/)
  - [Laravel Passport](https://laravel.com/docs/10.x/passport)
+
+Oh, tests are coming soon. But im waiting for Pest2 to be released.
