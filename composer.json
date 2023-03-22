@@ -1,0 +1,33 @@
+{
+    "name": "larapkg/laravel-social-user",
+    "description": "Social controller setup for using with Laravel Socialite",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Larapkg\\LaravelSocialUser\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ron Appleton",
+            "email": "ron.appleton@mercatura.co.uk"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "laravel/socialite": "^5.6",
+        "laravel/framework": "^10"
+    }
+    ,
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Larapkg\\LaravelSocialUser\\LaravelSocialUserServiceProvider"
+            ]
+        }
+    }
+}
