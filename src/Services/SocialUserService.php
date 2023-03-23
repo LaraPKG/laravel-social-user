@@ -9,7 +9,6 @@ use Larapkg\LaravelSocialUser\Models\UserSocialProvider;
 use Laravel\Socialite\AbstractUser;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Facades\Socialite;
-
 class SocialUserService
 {
     private readonly string $userModel;
