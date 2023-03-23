@@ -5,7 +5,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Larapkg\\LaravelSocialUser\\": "src/"
+            "Larapkg\\LaravelSocialUser\\": "src/",
+            "Larapkg\\LaravelSocialUser\\Tests\\": "tests"
         }
     },
     "authors": [
@@ -22,13 +23,20 @@
     }
     ,
     "require-dev": {
-        "roave/security-advisories": "dev-latest"
+        "roave/security-advisories": "dev-latest",
+        "orchestra/testbench": "^8.0",
+        "pestphp/pest": "^2.2"
     },
     "extra": {
         "laravel": {
             "providers": [
                 "Larapkg\\LaravelSocialUser\\LaravelSocialUserServiceProvider"
             ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     }
 }
