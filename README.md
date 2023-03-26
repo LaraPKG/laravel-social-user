@@ -72,4 +72,4 @@ Those things are out of scope for this readme, but you can find more information
  - [Laravel Socialite Providers](https://socialiteproviders.netlify.app/)
  - [Laravel Passport](https://laravel.com/docs/10.x/passport)
 
-Oh, tests are coming soon. But im waiting for Pest2 to be released.
+This package does not contain any tests.

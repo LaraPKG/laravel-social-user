@@ -24,13 +24,12 @@
     ,
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "orchestra/testbench": "^8.0",
-        "pestphp/pest": "^2.2"
+        "orchestra/testbench": "^8.0"
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Larapkg\\LaravelSocialUser\\LaravelSocialUserServiceProvider"
+                "Larapkg\\LaravelSocialUser\\Providers\\LaravelSocialProviderServiceProvider"
             ]
         }
     },
